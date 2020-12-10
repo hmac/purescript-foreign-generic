@@ -13,8 +13,5 @@
     "purescript-psa": "^0.7.3",
     "rimraf": "^3.0.0"
   },
-  "dependencies": {
-    "bignumber": "^1.1.0",
-    "json-bigint": "^1.0.0"
-  }
+  "dependencies": {}
 }

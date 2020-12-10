@@ -2,11 +2,9 @@ module Test.Main where
 
 import Prelude
 import TestUtils (testGenericRoundTrip, testOption, testRoundTrip)
-import BigIntegerTests as BigIntegerTests
 import AesonEncodingTests as AesonEncodingTests
 import Control.Monad.Except (runExcept)
 import Data.Bifunctor (bimap)
-import Data.BigInteger as BigInteger
 import Data.Either (Either(..))
 import Data.Map (Map)
 import Data.Map as Map
@@ -79,7 +77,6 @@ main :: Effect Unit
 main =
   runTest do
     roundTripTests
-    BigIntegerTests.all
     AesonEncodingTests.all
 
 roundTripTests :: TestSuite
@@ -106,12 +103,6 @@ roundTripTests =
       equal (Right (Map.empty :: Map String Int))
         (runExcept (decodeJSON "null"))
     testRoundTrip [ Left 5, Right "Test" ]
-    testRoundTrip (BigInteger.fromString ("9055784127882682410409638")) -- 2^60. Anything over 2^32 would baffle JavaScript.
-    test "BigInteger" do
-      equal (Right (BigInteger.fromInt 50))
-        (runExcept (decodeJSON "50"))
-      equal (Right { a: (BigInteger.fromInt 50) })
-        (runExcept (decodeJSON "{\"a\": 50}"))
     testUnaryConstructorLiteral
     let
       opts = defaultOptions { fieldTransform = toUpper }
