@@ -1,6 +1,7 @@
 module AesonEncodingTests (all) where
 
 import Prelude
+import Data.Maybe (Maybe(..))
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Foreign.Generic (class Decode, class Encode, Options, defaultOptions, encodeJSON, genericDecode, genericEncode)
@@ -24,8 +25,15 @@ all =
       test "Sum type, 1 arg constructor." do
         equal "{\"contents\":\"Test\",\"tag\":\"ShipperChoice\"}"
           (encodeJSON (ShipperChoice "Test"))
+      test "Sum type, Maybe arg constructor" do
+        equal "{\"contents\":\"Test\",\"tag\":\"MaybeShipperChoice\"}"
+          (encodeJSON (MaybeShipperChoice (Just "Test")))
+        equal "{\"contents\":null,\"tag\":\"MaybeShipperChoice\"}"
+          (encodeJSON (MaybeShipperChoice Nothing))
       testRoundTrip NoShipperChoice
       testRoundTrip (ShipperChoice "Test")
+      testRoundTrip (MaybeShipperChoice Nothing)
+      testRoundTrip (MaybeShipperChoice (Just "Test"))
     suite "Nesting" do
       test "Nested no arg constructor" do
         equal "{\"tag\":\"FreightForwarderShipper\",\"contents\":{\"tag\":\"NoShipperChoice\"}}"
@@ -66,6 +74,7 @@ instance encodeARecord :: Encode ARecord where
 
 data ShipperChoice
   = ShipperChoice String
+  | MaybeShipperChoice (Maybe String)
   | NoShipperChoice
 
 derive instance eqShipperChoice :: Eq ShipperChoice

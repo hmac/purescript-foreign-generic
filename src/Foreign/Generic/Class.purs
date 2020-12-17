@@ -19,7 +19,7 @@ import Data.Set as Set
 import Data.Symbol (class IsSymbol, SProxy(..), reflectSymbol)
 import Data.Traversable (sequence, traverse)
 import Data.Tuple (Tuple(..))
-import Foreign (F, Foreign, ForeignError(..), fail, typeOf, isArray, readArray, readBoolean, readChar, readInt, readNull, readNumber, readString, unsafeToForeign, unsafeFromForeign)
+import Foreign (F, Foreign, ForeignError(..), fail, typeOf, isArray, readArray, readBoolean, readChar, readInt, readNull, readNumber, readString, unsafeToForeign, unsafeFromForeign, isNull)
 import Foreign.Generic.Internal (readObject)
 import Foreign.Index (hasProperty, index, readProp)
 import Foreign.Keys as Keys
@@ -431,7 +431,7 @@ instance genericEncodeConstructor
       objectFromArgs :: SumEncoding -> Maybe Foreign -> Object Foreign
       objectFromArgs _ Nothing = Object.empty
       objectFromArgs (TaggedObject { contentsFieldName, unwrapRecords }) (Just f)
-        | typeOf f == "object" && not isArray f && unwrapRecords = unsafeFromForeign f
+        | typeOf f == "object" && not isArray f && not isNull f && unwrapRecords = unsafeFromForeign f
         | otherwise = Object.singleton contentsFieldName f
 
       encodeArgsArray :: rep -> Maybe Foreign
